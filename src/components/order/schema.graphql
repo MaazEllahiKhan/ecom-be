@@ -1,0 +1,24 @@
+type OrderEntityOutput {
+    orderId: Int
+    createdAt: String
+    websiteSessionId: Int
+    userId: Int
+    primaryProductId: Int
+    itemsPurchased: Int
+    priceUsd: Float
+    cogsUsd: Float
+}
+
+type OrderItemEntityOutput {
+    orderItemId: Int
+    createdAt: Int
+    orderId: OrderEntityOutput
+    productId: ProductsEntityOutput
+    isPrimaryItem: Int
+    priceUsd: Int
+    cogsUsd: Int
+}
+
+type Query {
+  getOrderItems: [OrderItemEntityOutput!]
+}

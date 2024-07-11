@@ -1,0 +1,68 @@
+input AdminUser {
+  admin_id: Int!
+  first_name: String!
+  last_name: String!
+  email: String!
+  password: String!
+}
+
+input AdminSignUpInput {
+  email: String!
+  password: String!
+  first_name: String!
+  last_name: String!
+  token: String!
+}
+
+type AdminSignUpOutput {
+  email: String!
+}
+
+input AdminLoginInput {
+  email: String!
+  password: String!
+}
+
+input AdminUpdatePasswordInput {
+  email: String!
+  password: String!
+}
+
+input AdminChangePasswordInput {
+  email: String!
+  oldPassword: String!
+  newPassword: String!
+}
+
+type AdminLoginOutput {
+  access_token: String!
+#   is2faEnabled: Boolean!
+}
+
+type TwoFaCredentialsOutput {
+  totp_uri: String!
+}
+
+type Mutation {
+  adminSignUp(
+    first_name: String!
+    last_name: String!
+    email: String!
+    password: String!
+    token: String!
+  ): AdminSignUpOutput!
+
+#   adminUpdatePassword(password: String!): Boolean
+
+#   adminChangePassword(oldPassword: String!, newPassword: String!): Boolean
+
+#   verify2fa(code: String!): AdminLoginOutput!
+
+#   enableDisable2fa(code: String!, isEnabled: Boolean!): Boolean!
+}
+
+type Query {
+  adminLogin(email: String!, password: String!): AdminLoginOutput!
+#   forgetPassword(email: String!): Boolean!
+#   twoFaCredentials: TwoFaCredentialsOutput!
+}

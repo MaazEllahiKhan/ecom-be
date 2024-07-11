@@ -1,0 +1,50 @@
+input AddProductInput {
+  name: String!
+}
+
+type ProductsEntityOutput {
+productId: Int!
+createdAt: String
+productName: String
+}
+
+type ProductSearchEntityOutput {
+itemNo: Int!
+categoryName: String
+itemDescription: String
+vendor: Int
+vendorName: String
+bottleSize: Int
+pack: Int
+innerPack: Int
+age: String
+proof: Int
+listDate: String
+upc: String
+scc: String
+bottlePrice: String
+shelfPrice: Float
+caseCost: Float
+}
+
+
+
+type Query {
+  getProducts: [ProductsEntityOutput!]
+}
+
+type Query {
+  searchProducts( 
+    name: String
+    description: String
+  ): [ProductSearchEntityOutput!]
+}
+
+type Mutation {
+  addProduct(name: String, description: String) : ProductsEntityOutput
+}
+
+type Subscription {
+  productAdded: ProductsEntityOutput
+}
+
