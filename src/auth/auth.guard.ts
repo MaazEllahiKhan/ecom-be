@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, HttpStatus, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,12 +7,13 @@ import { AdminUserEntity } from 'src/entities/admin.entity';
 import { Repository } from 'typeorm';
 import { AuthService } from './auth.service';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
+import { GraphQLError } from 'graphql';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor( @InjectRepository(AdminUserEntity)
+  constructor(@InjectRepository(AdminUserEntity)
   private readonly adminRepository: Repository<AdminUserEntity>,
-  private readonly authService: AuthService) {}
+    private readonly authService: AuthService) { }
 
   async canActivate(
     context: ExecutionContext,
@@ -31,12 +32,12 @@ export class AuthGuard implements CanActivate {
           console.log('decodedToken', decodedToken)
         } catch (error) {
           console.log('error', error)
-          throw new HttpException(
+          throw new GraphQLError('authorization token is incorrect!',
             {
-              status: HttpStatus.UNAUTHORIZED,
-              error: 'authorization token is incorrect!',
-            },
-            HttpStatus.UNAUTHORIZED,
+              extensions: {
+                code: HttpStatus.UNAUTHORIZED
+              }
+            }
           )
         }
 
@@ -47,30 +48,24 @@ export class AuthGuard implements CanActivate {
               email: email,
             },
           })
-            console.log('Request via admin user: ', adminUser.email)
-            req.user = adminUser
-            new ExecutionContextHost([req])
-            return true
+          console.log('Request via admin user: ', adminUser.email)
+          req.user = adminUser
+          new ExecutionContextHost([req])
+          return true
           // }
         }
       } else {
-        throw new HttpException(
+        throw new GraphQLError('authorization token not provided!',
           {
-            status: HttpStatus.UNAUTHORIZED,
-            error: 'authorization token not provided!',
-          },
-          HttpStatus.UNAUTHORIZED
+            extensions: {
+              code: HttpStatus.UNAUTHORIZED
+            }
+          }
         )
       }
     } catch (error) {
       console.log('error', error)
-      throw new HttpException(
-        {
-          status: error.response.status,
-          error: error.response.error,
-        },
-        error.status,
-      )
+      throw error
     }
   }
 }

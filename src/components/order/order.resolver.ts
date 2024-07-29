@@ -1,6 +1,7 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { OrderService } from './order.service';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common';
+import { GraphQLError } from 'graphql';
 
 @Resolver()
 export class OrderResolver {
@@ -11,12 +12,12 @@ export class OrderResolver {
       try {
         return await this.OrderService.getOrderItems()
       } catch (error) {
-        throw new HttpException(
+        throw new GraphQLError(error.message,
           {
-            status: HttpStatus.EXPECTATION_FAILED,
-            error: error.message,
-          },
-          HttpStatus.FORBIDDEN,
+            extensions: {
+              code:  HttpStatus.EXPECTATION_FAILED
+            }
+          }
         )
       }
     }

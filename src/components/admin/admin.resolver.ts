@@ -2,8 +2,9 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AdminService } from './admin.service';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginDto, SignupDto } from 'src/dto/admin.dto';
-import { HttpException, HttpStatus, Inject, forwardRef } from '@nestjs/common';
+import { HttpStatus, Inject, forwardRef } from '@nestjs/common';
 import { AdminLoginOutput, AdminSignUpOutput } from 'src/graphql';
+import { GraphQLError } from 'graphql';
 
 @Resolver()
 export class AdminResolver {
@@ -19,12 +20,12 @@ export class AdminResolver {
         // try {
         console.log('args.token, process.env.TOKEN', args.token, process.env.ADMIN_SIGNUP_TOKEN)
         if (args.token != process.env.ADMIN_SIGNUP_TOKEN) {
-          throw new HttpException(
+          throw new GraphQLError('Authorization Token not correct!',
             {
-              status: HttpStatus.FORBIDDEN,
-              error: 'Authorization Token not correct!',
-            },
-            400,
+              extensions: {
+                code: HttpStatus.UNAUTHORIZED
+              }
+            }
           )
         }
         await this.adminService.createUser(args)

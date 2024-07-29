@@ -34,6 +34,7 @@ import {
   }
   
   export class LoginDto extends AdminLoginInput {
+    @IsNotEmpty()
     @IsEmail()
     email: string
   

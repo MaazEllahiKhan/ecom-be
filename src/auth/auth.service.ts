@@ -1,7 +1,8 @@
-import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AdminService } from 'src/components/admin/admin.service';
 import * as bcrypt from 'bcrypt'
+import { GraphQLError } from 'graphql';
 
 @Injectable()
 export class AuthService {
@@ -15,27 +16,28 @@ export class AuthService {
     async validateAdminUser(email: string, pass: string): Promise<any> {
         const user = await this.adminService.findOne(email)
         if (user) {
+            
             const isPasswordMatched: boolean = bcrypt.compareSync(pass, user.password)
             if (isPasswordMatched) {
                 const { password, ...result } = user
                 return user
             } else {
-                throw new HttpException(
-                    {
-                        status: HttpStatus.NOT_ACCEPTABLE,
-                        error: 'Incorrect Password',
-                    },
-                    200,
+                throw new GraphQLError( 'Incorrect Password',
+                   {
+                    extensions: {
+                        code: HttpStatus.FORBIDDEN
+                    }
+                   }
                 )
             }
         } else {
-            throw new HttpException(
+            throw new GraphQLError('User does not exist',
                 {
-                    status: HttpStatus.FORBIDDEN,
-                    error: 'User does not exist',
-                },
-                HttpStatus.FORBIDDEN,
-            )
+                 extensions: {
+                     code: HttpStatus.FORBIDDEN
+                 }
+                }
+             )
         }
     }
 

@@ -20,7 +20,13 @@ export class ProductService {
       ) { }
     
       async getProducts(): Promise<ProductEntity[]> {
-        const response = await this.productRepository.find();
+        const response = await this.productRepository.find({
+          order: {
+            productId: "DESC",
+          },
+          skip: 0,
+          take: 10,
+        });
         Logger.log('res', response);
         return  response;
       }
