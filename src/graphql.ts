@@ -65,11 +65,26 @@ export abstract class IMutation {
 export abstract class IQuery {
     abstract adminLogin(email: string, password: string): AdminLoginOutput | Promise<AdminLoginOutput>;
 
+    abstract getSingleNotification(): Nullable<string> | Promise<Nullable<string>>;
+
+    abstract getConsumeNotifications(group?: Nullable<string>, consumer?: Nullable<string>, count?: Nullable<number>): Nullable<string> | Promise<Nullable<string>>;
+
     abstract getOrderItems(): Nullable<OrderItemEntityOutput[]> | Promise<Nullable<OrderItemEntityOutput[]>>;
 
     abstract getProducts(): Nullable<ProductsEntityOutput[]> | Promise<Nullable<ProductsEntityOutput[]>>;
 
     abstract searchProducts(name?: Nullable<string>, description?: Nullable<string>): Nullable<ProductSearchEntityOutput[]> | Promise<Nullable<ProductSearchEntityOutput[]>>;
+}
+
+export class RedisEventOutput {
+    hello?: Nullable<string>;
+    date?: Nullable<string>;
+}
+
+export abstract class ISubscription {
+    abstract redisEvents(): Nullable<RedisEventOutput> | Promise<Nullable<RedisEventOutput>>;
+
+    abstract productAdded(): Nullable<ProductsEntityOutput> | Promise<Nullable<ProductsEntityOutput>>;
 }
 
 export class OrderEntityOutput {
@@ -116,10 +131,6 @@ export class ProductSearchEntityOutput {
     bottlePrice?: Nullable<string>;
     shelfPrice?: Nullable<number>;
     caseCost?: Nullable<number>;
-}
-
-export abstract class ISubscription {
-    abstract productAdded(): Nullable<ProductsEntityOutput> | Promise<Nullable<ProductsEntityOutput>>;
 }
 
 type Nullable<T> = T | null;
