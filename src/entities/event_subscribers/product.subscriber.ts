@@ -11,7 +11,7 @@ export class ProductSubscriber implements EntitySubscriberInterface<ProductEntit
      * Indicates that this subscriber only listen to ProductEntity events.
      */
     listenTo() {
-        console.log(`Listener ready `)
+        // console.log(`Listener ready `)
         return ProductEntity
     }
 

@@ -1,0 +1,19 @@
+
+type RedisEventOutput {
+    hello: String
+    date: String
+    # nestedObj: { num: String},
+},
+type Subscription {
+  redisEvents: RedisEventOutput
+}
+
+type Query {
+  getSingleNotification: ID
+  getConsumeNotifications(
+    group: String
+    consumer: String
+    count: Int 
+  ): ID
+
+}

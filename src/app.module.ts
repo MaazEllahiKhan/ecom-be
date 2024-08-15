@@ -11,8 +11,10 @@ import { OrderModule } from './components/order/order.module';
 import { ProductSubscriber } from './entities/event_subscribers/product.subscriber';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './components/admin/admin.module';
-import { AdminUserEntity } from './entities/admin.entity';
-import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import { NotificationModule } from './components/notification/notification.module';
+import { PubsubModule } from './common/redis-micro/pubsub.module';
+import { RedisMicroModule } from './common/redis-micro/redis-micro.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -39,21 +41,18 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
         'graphql-ws': true
       },
       playground: true,
-      // formatError: (error: GraphQLError) => {
-      //   const graphQLFormattedError: GraphQLFormattedError = {
-      //     message: error?.extensions?.exception?.response?.message || error?.message,
-      //   };
-      //   return graphQLFormattedError;
-      // },
     }),
+    RedisMicroModule,
+    PubsubModule,
     ProductModule,
     OrderModule,
     AuthModule,
     AdminModule,
-    // TypeOrmModule.forFeature([AdminUserEntity]),
-
+    NotificationModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+  ],
 })
-export class AppModule {}
+export class AppModule { }
